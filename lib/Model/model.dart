@@ -1,43 +1,37 @@
 
-class Breed {
-  final String name;
-  final BreedImage? image;
+// To parse this JSON data, do
+//
+//     final welcome = welcomeFromJson(jsonString);
 
-  Breed({
-    required this.name,
-    this.image,
+import 'dart:convert';
+
+List<Welcome> welcomeFromJson(String str) => List<Welcome>.from(json.decode(str).map((x) => Welcome.fromJson(x)));
+String welcomeToJson(List<Welcome> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+class Welcome {
+  String id;
+  String url;
+  int width;
+  int height;
+
+  Welcome({
+    required this.id,
+    required this.url,
+    required this.width,
+    required this.height,
   });
 
-  factory Breed.fromJson(Map<String, dynamic> json) {
-    return Breed(
-      name: json['name'],
-      image: json['image'] != null ? BreedImage.fromJson(json['image']) : null,
-    );
-  }
+  factory Welcome.fromJson(Map<String, dynamic> json) => Welcome(
+    id: json["id"],
+    url: json["url"],
+    width: json["width"],
+    height: json["height"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "url": url,
+    "width": width,
+    "height": height,
+  };
 }
-
-class BreedImage {
-  final String? url;
-  final int? height;
-  final String? id;
-  final int? width;
-
-  BreedImage({
-    this.url,
-    this.height,
-    this.id,
-    this.width,
-  });
-
-  factory BreedImage.fromJson(Map<String, dynamic> json) {
-    return BreedImage(
-      url: json['url'],
-      height: json['height'],
-      id: json['id'],
-      width: json['width'],
-    );
-  }
-}
-
-typedef CatBreed = List<Breed>;
-

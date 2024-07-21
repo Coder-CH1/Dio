@@ -1,76 +1,71 @@
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:networking/Model/model.dart';
 
-class Gridhomepage extends StatefulWidget {
-  const Gridhomepage({Key? key}) : super(key: key);
+class GridHomePage extends StatefulWidget {
+  const GridHomePage({Key? key}) : super(key: key);
 
   @override
-  State<Gridhomepage> createState() => _GridhomepageState();
+  State<GridHomePage> createState() => _GridHomePageState();
 }
 
-class _GridhomepageState extends State<Gridhomepage> {
-  List<String> catImages = [];
-
+class _GridHomePageState extends State<GridHomePage> {
+  List<Welcome> catImages = [];
   @override
   void initState() {
     super.initState();
-    fetchCatImages().then((images) {
-      setState(() {
-        catImages = images;
-      });
+    fetchRandomCatImages().then((images){
+      if (images != null) {
+        setState(() {
+          catImages = images;
+        });
+      } else {
+
+      }
     });
   }
-
-  Future<List<String>> fetchCatImages() async {
-    final String apiUrl = 'https://api.thecatapi.com/v1/breeds';
-
+  Future<List<Welcome>?> fetchRandomCatImages() async {
+    String url = "https://api.thecatapi.com/v1/images/search?limit=30";
     try {
       Dio dio = Dio();
-      Response response = await dio.get(apiUrl);
+      Response response = await dio.get(url);
       if (response.statusCode == 200) {
-        List<dynamic> breedsData = response.data;
-        List<String> imageUrls = breedsData
-            .map((breed) => breed['image'] != null ? breed['image']['url'] : null)
-            .where((url) => url != null)
-            .cast<String>()
-            .toList();
-        return imageUrls;
+        List<dynamic> data = response.data;
+        List<Welcome> images = data.map((item) => Welcome.fromJson(item)).toList();
+        return images;
       } else {
-        print('Failed to fetch cat images. Status code: ${response.statusCode}');
-        return [];
+        return null;
       }
-    } catch (error) {
-      print('Error: $error');
-      return [];
+    } catch (error){
+      return null;
     }
   }
-
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Pix Gallerie"),
-        ),
-        body: Container(
-          color: Colors.grey,
-          child: GridView.count(
-            crossAxisCount: 3,
-            crossAxisSpacing: 10.0,
-            mainAxisSpacing: 10.0,
-            padding: EdgeInsets.all(10.0),
-            children: List.generate(catImages.length, (index) {
-              return CachedNetworkImage(
-                imageUrl: catImages[index],
-                fit: BoxFit.cover,
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              );
-            }),
-          ),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Cat Images Gallerie"),
       ),
+          body: Container(
+            color: Colors.brown,
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 10.0,
+                childAspectRatio: 1,
+              ),
+              padding: EdgeInsets.all(10.0),
+              itemCount: catImages.length,
+              itemBuilder: (context, index) {
+                return CachedNetworkImage(imageUrl: catImages[index].url,
+                fit: BoxFit.cover,
+                 placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                 errorWidget: (context, url, error) => Icon(Icons.error),
+                );
+              }
+            ),
+          ),
     );
   }
 }
