@@ -45,23 +45,23 @@ class _GridHomePageState extends State<GridHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cat Images Gallerie"),
+        title: const Text("Cat Images Gallerie"),
       ),
           body: Container(
             color: Colors.brown,
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 10.0,
                 childAspectRatio: 1,
               ),
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               itemCount: catImages.length,
               itemBuilder: (context, index) {
                 return CachedNetworkImage(imageUrl: catImages[index].url,
                 fit: BoxFit.cover,
-                 placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                 errorWidget: (context, url, error) => Icon(Icons.error),
+                 placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                 errorWidget: (context, url, error) => const Icon(Icons.error),
                 );
               }
             ),
