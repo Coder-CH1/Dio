@@ -1,4 +1,4 @@
-# Dio
+# Dio -
 
 
-### A Powerful HTTP package for making networking request in Flutter.
+- A Versatile and Powerful HTTP package for making networking request in Flutter.
